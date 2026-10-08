@@ -162,12 +162,12 @@ export async function handleMockFallback(config: AxiosRequestConfig): Promise<Ax
       id: `addr_demo_${Date.now()}`,
       userId: getStoredUser().id,
       fullName: body.fullName || 'John Doe',
-      phone: body.phone || '+1 555-0100',
-      street: body.street || '123 Main St',
-      city: body.city || 'San Francisco',
-      state: body.state || 'CA',
-      postalCode: body.postalCode || '94105',
-      country: body.country || 'United States',
+      phone: body.phone || '+91 98765 43210',
+      street: body.street || 'Flat 402, Prestige Tech Park, Marathahalli Ring Road',
+      city: body.city || 'Bengaluru',
+      state: body.state || 'Karnataka',
+      postalCode: body.postalCode || '560103',
+      country: body.country || 'India',
       isDefault: list.length === 0,
     };
     const updated = [...list, newAddress];
@@ -318,15 +318,17 @@ export async function handleMockFallback(config: AxiosRequestConfig): Promise<Ax
     const cart = getStoredCart();
     const subtotal = cart.items.reduce((sum, item) => sum + (item.product?.price || 0) * item.quantity, 0);
     const discount = body.couponCode?.toUpperCase() === 'WELCOME10' ? Number((subtotal * 0.1).toFixed(2)) : 0;
-    const tax = Number(((subtotal - discount) * 0.08).toFixed(2));
-    const total = Number((subtotal - discount + tax).toFixed(2));
+    const shipping = subtotal >= 999 || subtotal === 0 ? 0 : 99;
+    const taxableAmount = Math.max(0, subtotal - discount);
+    const tax = Number((taxableAmount * 0.18).toFixed(2));
+    const total = Number((taxableAmount + shipping + tax).toFixed(2));
 
     responseData = {
       success: true,
       data: {
         subtotal,
         discountAmount: discount,
-        shippingAmount: 0,
+        shippingAmount: shipping,
         taxAmount: tax,
         totalAmount: total,
         itemCount: cart.items.reduce((sum, i) => sum + i.quantity, 0),
@@ -340,23 +342,25 @@ export async function handleMockFallback(config: AxiosRequestConfig): Promise<Ax
 
     const subtotal = cart.items.reduce((sum, item) => sum + (item.product?.price || 0) * item.quantity, 0);
     const discount = body.couponCode?.toUpperCase() === 'WELCOME10' ? Number((subtotal * 0.1).toFixed(2)) : 0;
-    const tax = Number(((subtotal - discount) * 0.08).toFixed(2));
-    const total = Number((subtotal - discount + tax).toFixed(2));
+    const shipping = subtotal >= 999 || subtotal === 0 ? 0 : 99;
+    const taxableAmount = Math.max(0, subtotal - discount);
+    const tax = Number((taxableAmount * 0.18).toFixed(2));
+    const total = Number((taxableAmount + shipping + tax).toFixed(2));
 
     const newOrder: Order = {
       id: `ord_demo_${Date.now()}`,
-      orderNumber: `ORD-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      orderNumber: `OD-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`,
       userId: getStoredUser().id,
       shippingAddressId: selectedAddress.id,
       shippingAddressSnapshot: JSON.stringify(selectedAddress),
       subtotal,
       discountAmount: discount,
-      shippingAmount: 0,
+      shippingAmount: shipping,
       taxAmount: tax,
       totalAmount: total,
       status: 'CONFIRMED',
       paymentStatus: 'PAID',
-      trackingNumber: `TRK-${Math.floor(100000000 + Math.random() * 900000000)}US`,
+      trackingNumber: `DELHIVERY-${Math.floor(100000000 + Math.random() * 900000000)}IN`,
       couponCode: body.couponCode || null,
       createdAt: new Date(),
       updatedAt: new Date(),

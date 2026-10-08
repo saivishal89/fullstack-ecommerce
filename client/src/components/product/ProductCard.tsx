@@ -4,6 +4,7 @@ import { Product } from '@ecommerce/shared';
 import { Heart, Star, ShoppingBag } from 'lucide-react';
 import { useWishlistStore } from '../../store/useWishlistStore';
 import { useCartStore } from '../../store/useCartStore';
+import { formatINR } from '../../utils/formatters';
 
 interface ProductCardProps {
   product: Product;
@@ -118,13 +119,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         {/* Price & Stock info */}
         <div className="mt-3 pt-3 border-t border-slate-50 flex items-center justify-between">
-          <div className="flex items-baseline gap-2">
-            <span className="text-base font-extrabold text-slate-950">
-              ${product.price.toFixed(2)}
-            </span>
+          <div className="flex flex-col">
+            <div className="flex items-baseline gap-2">
+              <span className="text-base font-extrabold text-slate-950">
+                {formatINR(product.price)}
+              </span>
+              {hasDiscount && (
+                <span className="text-xs text-slate-400 line-through">
+                  M.R.P: {formatINR(product.compareAtPrice)}
+                </span>
+              )}
+            </div>
             {hasDiscount && (
-              <span className="text-xs text-slate-400 line-through">
-                ${product.compareAtPrice!.toFixed(2)}
+              <span className="text-[11px] font-bold text-emerald-600">
+                ({discountPercent}% off)
               </span>
             )}
           </div>

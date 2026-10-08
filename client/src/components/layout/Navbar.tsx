@@ -43,7 +43,7 @@ export const Navbar: React.FC = () => {
       {/* Top Banner */}
       <div className="bg-slate-900 text-white text-xs py-1.5 px-4 text-center font-medium tracking-wide flex items-center justify-center gap-2">
         <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-        <span>COMPLIMENTARY EXPRESS SHIPPING ON ORDERS OVER $150 — USE CODE <strong>WELCOME10</strong> FOR 10% OFF</span>
+        <span>FREE EXPRESS DELIVERY ON ORDERS OVER ₹999 — USE CODE <strong>WELCOME10</strong> FOR 10% OFF</span>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

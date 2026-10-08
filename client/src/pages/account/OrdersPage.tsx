@@ -13,6 +13,7 @@ import {
   X,
   AlertTriangle,
 } from 'lucide-react';
+import { formatINR } from '../../utils/formatters';
 
 export const OrdersPage: React.FC = () => {
   const { addToast } = useToastStore();
@@ -121,7 +122,7 @@ export const OrdersPage: React.FC = () => {
                       />
                       <span className="font-semibold text-slate-800">{item.productName} × {item.quantity}</span>
                     </div>
-                    <span className="font-bold text-slate-900">${item.totalPrice.toFixed(2)}</span>
+                    <span className="font-bold text-slate-900">{formatINR(item.totalPrice)}</span>
                   </div>
                 ))}
               </div>
@@ -133,7 +134,7 @@ export const OrdersPage: React.FC = () => {
                 <div className="text-right">
                   <span className="text-xs text-slate-500 mr-2">Total Amount:</span>
                   <span className="text-base font-extrabold text-slate-950">
-                    ${order.totalAmount.toFixed(2)}
+                    {formatINR(order.totalAmount)}
                   </span>
                 </div>
               </div>

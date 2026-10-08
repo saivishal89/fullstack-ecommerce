@@ -23,6 +23,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { fallbackProducts } from '../data/mockData';
+import { formatINR, getDiscountPercentage } from '../utils/formatters';
 
 export const ProductDetailPage: React.FC = () => {
   const { slugOrId } = useParams<{ slugOrId: string }>();
@@ -252,13 +253,20 @@ export const ProductDetailPage: React.FC = () => {
 
           {/* Price breakdown */}
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-baseline justify-between">
-            <div className="flex items-baseline gap-3">
-              <span className="text-3xl font-extrabold text-slate-950">
-                ${currentPrice.toFixed(2)}
-              </span>
-              {product.compareAtPrice && product.compareAtPrice > currentPrice && (
-                <span className="text-base text-slate-400 line-through">
-                  ${product.compareAtPrice.toFixed(2)}
+            <div className="flex flex-col">
+              <div className="flex items-baseline gap-3">
+                <span className="text-3xl font-extrabold text-slate-950">
+                  {formatINR(currentPrice)}
+                </span>
+                {product.compareAtPrice && product.compareAtPrice > currentPrice && (
+                  <span className="text-base text-slate-400 line-through">
+                    M.R.P: {formatINR(product.compareAtPrice)}
+                  </span>
+                )}
+              </div>
+              {getDiscountPercentage(currentPrice, product.compareAtPrice) && (
+                <span className="text-xs font-bold text-emerald-600 mt-0.5">
+                  Save {getDiscountPercentage(currentPrice, product.compareAtPrice)} (Inclusive of all taxes)
                 </span>
               )}
             </div>
@@ -301,7 +309,7 @@ export const ProductDetailPage: React.FC = () => {
                       <div>{v.name}</div>
                       {v.priceAdjustment !== 0 && (
                         <div className="text-[10px] text-slate-500 font-normal mt-0.5">
-                          {v.priceAdjustment > 0 ? `+$${v.priceAdjustment}` : `-$${Math.abs(v.priceAdjustment)}`}
+                          {v.priceAdjustment > 0 ? `+${formatINR(v.priceAdjustment)}` : `-${formatINR(Math.abs(v.priceAdjustment))}`}
                         </div>
                       )}
                     </button>
@@ -373,7 +381,7 @@ export const ProductDetailPage: React.FC = () => {
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
               <Truck className="w-4 h-4 text-brand-600 mx-auto mb-1" />
               <div className="text-[11px] font-semibold text-slate-900">Fast Shipping</div>
-              <div className="text-[10px] text-slate-500">Free over $150</div>
+              <div className="text-[10px] text-slate-500">Free over ₹999</div>
             </div>
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
               <RotateCcw className="w-4 h-4 text-amber-500 mx-auto mb-1" />

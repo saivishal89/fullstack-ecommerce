@@ -16,6 +16,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { formatINR } from '../../utils/formatters';
 
 export const AdminProducts: React.FC = () => {
   const { addToast } = useToastStore();
@@ -288,7 +289,7 @@ export const AdminProducts: React.FC = () => {
                         </span>
                       </td>
                       <td className="py-3 px-4 font-extrabold text-slate-900">
-                        ${p.price.toFixed(2)}
+                        {formatINR(p.price)}
                       </td>
                       <td className="py-3 px-4">
                         <span
@@ -400,28 +401,28 @@ export const AdminProducts: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Price ($) *</label>
+                  <label className="block font-semibold text-slate-700 mb-1">Price (₹) *</label>
                   <input
                     type="number"
-                    step="0.01"
+                    step="1"
                     min="0"
                     required
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20"
-                    placeholder="299.99"
+                    placeholder="24999"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Compare Price ($)</label>
+                  <label className="block font-semibold text-slate-700 mb-1">Compare Price (₹)</label>
                   <input
                     type="number"
-                    step="0.01"
+                    step="1"
                     min="0"
                     value={formData.compareAtPrice}
                     onChange={(e) => setFormData({ ...formData, compareAtPrice: e.target.value })}
                     className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20"
-                    placeholder="349.99"
+                    placeholder="29999"
                   />
                 </div>
                 <div>

@@ -17,6 +17,7 @@ import {
   MapPin,
   Calendar,
 } from 'lucide-react';
+import { formatINR } from '../../utils/formatters';
 
 const STATUS_COLORS: Record<string, string> = {
   PENDING: 'bg-amber-50 text-amber-700 border-amber-200',
@@ -203,8 +204,8 @@ export const AdminOrders: React.FC = () => {
                         {o.paymentStatus}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-extrabold text-slate-900 whitespace-nowrap">
-                      ${o.totalAmount.toFixed(2)}
+                    <td className="py-3.5 px-4 font-extrabold text-slate-950 whitespace-nowrap">
+                      {formatINR(o.totalAmount)}
                       <span className="text-[10px] font-normal text-slate-400 block">
                         {o.items?.length || 0} items
                       </span>
@@ -267,11 +268,11 @@ export const AdminOrders: React.FC = () => {
                       <div>
                         <div className="font-bold text-slate-900">{item.productName}</div>
                         <div className="text-[10px] text-slate-500">
-                          Qty: {item.quantity} × ${item.unitPrice.toFixed(2)}
+                          Qty: {item.quantity} × {formatINR(item.unitPrice)}
                         </div>
                       </div>
                       <div className="font-extrabold text-slate-900">
-                        ${item.totalPrice.toFixed(2)}
+                        {formatINR(item.totalPrice)}
                       </div>
                     </div>
                   ))}
@@ -282,25 +283,27 @@ export const AdminOrders: React.FC = () => {
               <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 space-y-2">
                 <div className="flex justify-between text-slate-600">
                   <span>Subtotal</span>
-                  <span className="font-bold text-slate-900">${activeOrder.subtotal.toFixed(2)}</span>
+                  <span className="font-bold text-slate-900">{formatINR(activeOrder.subtotal)}</span>
                 </div>
                 {activeOrder.discountAmount > 0 && (
                   <div className="flex justify-between text-emerald-600">
                     <span>Discount</span>
-                    <span className="font-bold">-${activeOrder.discountAmount.toFixed(2)}</span>
+                    <span className="font-bold">-{formatINR(activeOrder.discountAmount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-slate-600">
-                  <span>Shipping Fee</span>
-                  <span className="font-bold text-slate-900">${activeOrder.shippingAmount.toFixed(2)}</span>
+                  <span>Delivery Charges</span>
+                  <span className="font-bold text-slate-900">
+                    {activeOrder.shippingAmount === 0 ? 'FREE' : formatINR(activeOrder.shippingAmount)}
+                  </span>
                 </div>
                 <div className="flex justify-between text-slate-600">
-                  <span>Tax Amount</span>
-                  <span className="font-bold text-slate-900">${activeOrder.taxAmount.toFixed(2)}</span>
+                  <span>GST (18%)</span>
+                  <span className="font-bold text-slate-900">{formatINR(activeOrder.taxAmount)}</span>
                 </div>
                 <div className="pt-2 border-t border-slate-200 flex justify-between text-slate-950 font-extrabold text-sm">
                   <span>Grand Total</span>
-                  <span className="text-brand-600">${activeOrder.totalAmount.toFixed(2)}</span>
+                  <span className="text-brand-600">{formatINR(activeOrder.totalAmount)}</span>
                 </div>
               </div>
 

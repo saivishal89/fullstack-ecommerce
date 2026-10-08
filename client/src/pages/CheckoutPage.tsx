@@ -16,6 +16,7 @@ import {
   ArrowRight,
   ChevronLeft,
 } from 'lucide-react';
+import { formatINR } from '../utils/formatters';
 
 export const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -407,7 +408,7 @@ export const CheckoutPage: React.FC = () => {
                       <div className="text-xs text-slate-500">Guaranteed next business day dispatch</div>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-slate-900">$25.00</span>
+                  <span className="text-xs font-bold text-slate-900">₹99</span>
                 </label>
               </div>
 
@@ -453,7 +454,7 @@ export const CheckoutPage: React.FC = () => {
                       </div>
                     </div>
                     <span className="text-xs font-bold text-slate-900">
-                      ${(((item.product?.price ?? 0) + (item.variant?.priceAdjustment ?? 0)) * item.quantity).toFixed(2)}
+                      {formatINR(((item.product?.price ?? 0) + (item.variant?.priceAdjustment ?? 0)) * item.quantity)}
                     </span>
                   </div>
                 ))}
@@ -576,7 +577,7 @@ export const CheckoutPage: React.FC = () => {
                   disabled={isProcessingOrder}
                   className="px-8 py-3.5 rounded-xl bg-slate-900 hover:bg-brand-600 disabled:bg-slate-400 text-white font-bold text-sm transition-all shadow-md flex items-center gap-2"
                 >
-                  {isProcessingOrder ? 'Confirming Order...' : `Pay $${summary?.totalAmount?.toFixed(2) || '0.00'}`}
+                  {isProcessingOrder ? 'Confirming Order...' : `Pay ${formatINR(summary?.totalAmount)}`}
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -597,31 +598,31 @@ export const CheckoutPage: React.FC = () => {
               <div className="space-y-3 text-xs">
                 <div className="flex justify-between text-slate-600">
                   <span>Subtotal ({summary.itemCount} items)</span>
-                  <span className="font-bold text-slate-900">${summary.subtotal.toFixed(2)}</span>
+                  <span className="font-bold text-slate-900">{formatINR(summary.subtotal)}</span>
                 </div>
 
                 {summary.discountAmount > 0 && (
                   <div className="flex justify-between text-emerald-600 font-semibold">
                     <span>Coupon ({couponCode})</span>
-                    <span>-${summary.discountAmount.toFixed(2)}</span>
+                    <span>-{formatINR(summary.discountAmount)}</span>
                   </div>
                 )}
 
                 <div className="flex justify-between text-slate-600">
-                  <span>Shipping</span>
+                  <span>Delivery Charges</span>
                   <span className="font-semibold text-slate-900">
-                    {summary.shippingAmount === 0 ? 'FREE' : `$${summary.shippingAmount.toFixed(2)}`}
+                    {summary.shippingAmount === 0 ? <span className="text-emerald-600 font-bold">FREE</span> : formatINR(summary.shippingAmount)}
                   </span>
                 </div>
 
                 <div className="flex justify-between text-slate-600">
-                  <span>Sales Tax (8%)</span>
-                  <span className="font-semibold text-slate-900">${summary.taxAmount.toFixed(2)}</span>
+                  <span>Applicable GST (18%)</span>
+                  <span className="font-semibold text-slate-900">{formatINR(summary.taxAmount)}</span>
                 </div>
 
                 <div className="pt-3 border-t border-slate-100 flex justify-between text-base font-extrabold text-slate-950">
                   <span>Total Amount</span>
-                  <span className="text-xl text-brand-600">${summary.totalAmount.toFixed(2)}</span>
+                  <span className="text-xl text-brand-600">{formatINR(summary.totalAmount)}</span>
                 </div>
               </div>
             ) : null}

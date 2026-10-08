@@ -5,6 +5,7 @@ import { useCartStore } from '../store/useCartStore';
 import { useAuthStore } from '../store/useAuthStore';
 import { WishlistItem } from '@ecommerce/shared';
 import { Heart, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
+import { formatINR } from '../utils/formatters';
 
 export const WishlistPage: React.FC = () => {
   const { isAuthenticated } = useAuthStore();
@@ -94,7 +95,7 @@ export const WishlistPage: React.FC = () => {
                   {product.name}
                 </Link>
                 <div className="text-base font-extrabold text-slate-950 mt-1">
-                  ${product.price.toFixed(2)}
+                  {formatINR(product.price)}
                 </div>
               </div>
 

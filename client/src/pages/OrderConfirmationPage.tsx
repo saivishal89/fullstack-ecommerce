@@ -3,6 +3,7 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import { orderApi } from '../api/services';
 import { Order } from '@ecommerce/shared';
 import { CheckCircle2, Package, ArrowRight, Truck, MapPin } from 'lucide-react';
+import { formatINR } from '../utils/formatters';
 
 export const OrderConfirmationPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -100,7 +101,7 @@ export const OrderConfirmationPage: React.FC = () => {
                   <span className="font-bold text-slate-900">{item.productName}</span>
                   <span className="text-slate-400 ml-2">× {item.quantity}</span>
                 </div>
-                <span className="font-bold text-slate-900">${item.totalPrice.toFixed(2)}</span>
+                <span className="font-bold text-slate-900">{formatINR(item.totalPrice)}</span>
               </div>
             ))}
           </div>
@@ -110,25 +111,27 @@ export const OrderConfirmationPage: React.FC = () => {
         <div className="pt-4 border-t border-slate-100 space-y-2 text-xs">
           <div className="flex justify-between text-slate-600">
             <span>Subtotal</span>
-            <span className="font-bold text-slate-900">${order.subtotal.toFixed(2)}</span>
+            <span className="font-bold text-slate-900">{formatINR(order.subtotal)}</span>
           </div>
           {order.discountAmount > 0 && (
             <div className="flex justify-between text-emerald-600 font-medium">
               <span>Discount</span>
-              <span>-${order.discountAmount.toFixed(2)}</span>
+              <span>-{formatINR(order.discountAmount)}</span>
             </div>
           )}
           <div className="flex justify-between text-slate-600">
-            <span>Shipping</span>
-            <span>{order.shippingAmount === 0 ? 'FREE' : `$${order.shippingAmount.toFixed(2)}`}</span>
+            <span>Delivery</span>
+            <span className="font-semibold text-slate-900">
+              {order.shippingAmount === 0 ? <span className="text-emerald-600 font-bold">FREE</span> : formatINR(order.shippingAmount)}
+            </span>
           </div>
           <div className="flex justify-between text-slate-600">
-            <span>Sales Tax</span>
-            <span>${order.taxAmount.toFixed(2)}</span>
+            <span>GST (18%)</span>
+            <span>{formatINR(order.taxAmount)}</span>
           </div>
           <div className="pt-2 border-t border-slate-100 flex justify-between text-base font-extrabold text-slate-950">
             <span>Total Paid</span>
-            <span className="text-lg text-brand-600">${order.totalAmount.toFixed(2)}</span>
+            <span className="text-lg text-brand-600">{formatINR(order.totalAmount)}</span>
           </div>
         </div>
       </div>

@@ -117,7 +117,7 @@ export const HomePage: React.FC = () => {
                   </div>
                   <div className="text-right">
                     <div className="text-xs text-slate-400">From</div>
-                    <div className="text-base font-extrabold text-white">$3,499.00</div>
+                    <div className="text-base font-extrabold text-white">₹2,49,900</div>
                   </div>
                 </div>
               </div>

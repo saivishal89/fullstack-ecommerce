@@ -2,6 +2,7 @@ import React from 'react';
 import { useCartStore } from '../../store/useCartStore';
 import { X, Trash2, ShoppingBag, ArrowRight, Plus, Minus } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { formatINR } from '../../utils/formatters';
 
 export const CartDrawer: React.FC = () => {
   const { cart, isOpen, setIsOpen, updateQuantity, removeItem } = useCartStore();
@@ -80,7 +81,7 @@ export const CartDrawer: React.FC = () => {
                           </div>
                         )}
                         <div className="text-sm font-bold text-slate-900 mt-1">
-                          ${((item.product?.price ?? 0) + (item.variant?.priceAdjustment ?? 0)).toFixed(2)}
+                          {formatINR((item.product?.price ?? 0) + (item.variant?.priceAdjustment ?? 0))}
                         </div>
                       </div>
 
@@ -124,7 +125,7 @@ export const CartDrawer: React.FC = () => {
               <div className="space-y-1.5">
                 <div className="flex justify-between text-sm text-slate-600">
                   <span>Subtotal</span>
-                  <span className="font-semibold text-slate-900">${subtotal.toFixed(2)}</span>
+                  <span className="font-semibold text-slate-900">{formatINR(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-xs text-slate-500">
                   <span>Shipping & taxes calculated at checkout</span>

@@ -12,6 +12,7 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { formatINR } from '../../utils/formatters';
 
 export const AdminDashboard: React.FC = () => {
   const [analytics, setAnalytics] = useState<AdminAnalyticsDto | null>(null);
@@ -54,14 +55,14 @@ export const AdminDashboard: React.FC = () => {
           <div>
             <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Revenue</div>
             <div className="text-2xl font-extrabold text-slate-950 mt-1">
-              ${analytics.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              {formatINR(analytics.totalRevenue)}
             </div>
             <div className="text-[11px] text-emerald-600 font-semibold mt-1 flex items-center gap-1">
               <TrendingUp className="w-3 h-3" /> Real captured payments
             </div>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-            <DollarSign className="w-6 h-6" />
+          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 font-extrabold text-xl flex items-center justify-center shrink-0">
+            ₹
           </div>
         </div>
 
@@ -123,7 +124,7 @@ export const AdminDashboard: React.FC = () => {
               <div key={cat.category} className="space-y-1">
                 <div className="flex justify-between text-xs font-semibold">
                   <span className="text-slate-700">{cat.category}</span>
-                  <span className="text-slate-900">${cat.revenue.toFixed(2)}</span>
+                  <span className="text-slate-900">{formatINR(cat.revenue)}</span>
                 </div>
                 <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                   <div

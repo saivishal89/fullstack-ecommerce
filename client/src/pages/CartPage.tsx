@@ -13,7 +13,9 @@ import {
   Tag,
   ShieldCheck,
   Check,
+  Truck,
 } from 'lucide-react';
+import { formatINR } from '../utils/formatters';
 
 export const CartPage: React.FC = () => {
   const navigate = useNavigate();
@@ -39,7 +41,7 @@ export const CartPage: React.FC = () => {
         addToast({
           type: 'success',
           title: 'Coupon applied',
-          message: `Saved $${res.discountAmount.toFixed(2)} on your order!`,
+          message: `Saved ${formatINR(res.discountAmount)} on your order!`,
         });
       }
     } catch (err: any) {
@@ -56,8 +58,8 @@ export const CartPage: React.FC = () => {
 
   const discountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0;
   const discountedSubtotal = Math.max(0, subtotal - discountAmount);
-  const estimatedShipping = discountedSubtotal >= 150 ? 0 : 10.0;
-  const estimatedTax = Math.round(discountedSubtotal * 0.08 * 100) / 100;
+  const estimatedShipping = discountedSubtotal >= 999 || discountedSubtotal === 0 ? 0 : 99.0;
+  const estimatedTax = Math.round(discountedSubtotal * 0.18 * 100) / 100;
   const estimatedTotal = Math.round((discountedSubtotal + estimatedShipping + estimatedTax) * 100) / 100;
 
   if (items.length === 0) {
@@ -130,10 +132,10 @@ export const CartPage: React.FC = () => {
 
                     <div className="text-right">
                       <div className="text-lg font-extrabold text-slate-950">
-                        ${(((item.product?.price ?? 0) + (item.variant?.priceAdjustment ?? 0)) * item.quantity).toFixed(2)}
+                        {formatINR(((item.product?.price ?? 0) + (item.variant?.priceAdjustment ?? 0)) * item.quantity)}
                       </div>
                       <div className="text-xs text-slate-400">
-                        ${((item.product?.price ?? 0) + (item.variant?.priceAdjustment ?? 0)).toFixed(2)} each
+                        {formatINR((item.product?.price ?? 0) + (item.variant?.priceAdjustment ?? 0))} each
                       </div>
                     </div>
                   </div>
@@ -202,40 +204,48 @@ export const CartPage: React.FC = () => {
               {appliedCoupon && (
                 <div className="flex items-center gap-1.5 text-emerald-600 text-xs font-medium pt-1">
                   <Check className="w-3.5 h-3.5" />
-                  <span>Code <strong>{appliedCoupon.coupon.code}</strong> applied (-${discountAmount.toFixed(2)})</span>
+                  <span>Code <strong>{appliedCoupon.coupon.code}</strong> applied (-{formatINR(discountAmount)})</span>
                 </div>
               )}
             </form>
+
+            {/* Free Delivery prompt (Amazon/Flipkart style) */}
+            {discountedSubtotal < 999 && (
+              <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-200/80 text-[11px] text-amber-900 flex items-center gap-2">
+                <Truck className="w-4 h-4 text-amber-600 shrink-0" />
+                <span>Add <strong>{formatINR(999 - discountedSubtotal)}</strong> more of eligible items to get <strong>FREE Delivery</strong>!</span>
+              </div>
+            )}
 
             {/* Pricing details */}
             <div className="space-y-3 pt-4 border-t border-slate-100 text-xs">
               <div className="flex justify-between text-slate-600">
                 <span>Subtotal</span>
-                <span className="font-bold text-slate-900">${subtotal.toFixed(2)}</span>
+                <span className="font-bold text-slate-900">{formatINR(subtotal)}</span>
               </div>
 
               {discountAmount > 0 && (
                 <div className="flex justify-between text-emerald-600 font-medium">
                   <span>Coupon Discount</span>
-                  <span>-${discountAmount.toFixed(2)}</span>
+                  <span>-{formatINR(discountAmount)}</span>
                 </div>
               )}
 
               <div className="flex justify-between text-slate-600">
-                <span>Estimated Shipping</span>
+                <span>Estimated Delivery</span>
                 <span className="font-semibold text-slate-900">
-                  {estimatedShipping === 0 ? 'FREE' : `$${estimatedShipping.toFixed(2)}`}
+                  {estimatedShipping === 0 ? <span className="text-emerald-600 font-bold">FREE</span> : formatINR(estimatedShipping)}
                 </span>
               </div>
 
               <div className="flex justify-between text-slate-600">
-                <span>Estimated Sales Tax (8%)</span>
-                <span className="font-semibold text-slate-900">${estimatedTax.toFixed(2)}</span>
+                <span>Estimated GST (18%)</span>
+                <span className="font-semibold text-slate-900">{formatINR(estimatedTax)}</span>
               </div>
 
               <div className="pt-3 border-t border-slate-100 flex justify-between text-base font-extrabold text-slate-950">
                 <span>Estimated Total</span>
-                <span className="text-xl">${estimatedTotal.toFixed(2)}</span>
+                <span className="text-xl text-brand-600">{formatINR(estimatedTotal)}</span>
               </div>
             </div>
 
