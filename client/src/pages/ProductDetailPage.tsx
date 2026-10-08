@@ -22,6 +22,7 @@ import {
   MessageSquare,
   ArrowRight,
 } from 'lucide-react';
+import { fallbackProducts } from '../data/mockData';
 
 export const ProductDetailPage: React.FC = () => {
   const { slugOrId } = useParams<{ slugOrId: string }>();
@@ -50,21 +51,38 @@ export const ProductDetailPage: React.FC = () => {
       if (!slugOrId) return;
       try {
         setLoading(true);
-        const data = await productApi.getBySlugOrId(slugOrId);
-        setProduct(data);
-        setSelectedImage(data.images?.[0]?.url || '');
-        if (data.variants && data.variants.length > 0) {
-          setSelectedVariant(data.variants[0]);
-        } else {
-          setSelectedVariant(null);
+        let data: any = null;
+        try {
+          data = await productApi.getBySlugOrId(slugOrId);
+        } catch {
+          data = fallbackProducts.find((p) => p.slug === slugOrId || p.id === slugOrId) || null;
         }
 
-        // Fetch related products
-        const rel = await productApi.getRelated(data.categoryId, data.id);
-        setRelated(rel);
+        if (!data) {
+          data = fallbackProducts.find((p) => p.slug === slugOrId || p.id === slugOrId) || null;
+        }
+
+        if (data) {
+          setProduct(data);
+          setSelectedImage(data.images?.[0]?.url || '');
+          if (data.variants && data.variants.length > 0) {
+            setSelectedVariant(data.variants[0]);
+          } else {
+            setSelectedVariant(null);
+          }
+
+          // Fetch related products safely
+          try {
+            const rel = await productApi.getRelated(data.categoryId, data.id);
+            setRelated(Array.isArray(rel) ? rel : fallbackProducts.filter((p) => p.id !== data.id));
+          } catch {
+            setRelated(fallbackProducts.filter((p) => p.id !== data.id));
+          }
+        } else {
+          setProduct(null);
+        }
       } catch (err: any) {
         console.error(err);
-        addToast({ type: 'error', message: 'Product not found' });
       } finally {
         setLoading(false);
       }

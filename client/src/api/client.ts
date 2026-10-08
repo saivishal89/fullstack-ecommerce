@@ -20,9 +20,15 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Global response error interceptor
+// Global response interceptor
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // If the server returned HTML (e.g. SPA index.html fallback), treat as an API error
+    if (typeof response.data === 'string' && (response.data.includes('<!doctype') || response.data.includes('<html'))) {
+      return Promise.reject(new Error('Backend API is currently offline or returning HTML fallback.'));
+    }
+    return response;
+  },
   (error) => {
     const data = error.response?.data;
     let message = data?.message || error.message || 'An unexpected error occurred';

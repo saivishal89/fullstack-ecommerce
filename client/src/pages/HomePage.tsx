@@ -16,26 +16,31 @@ import {
   Award,
 } from 'lucide-react';
 
+import { fallbackCategories, fallbackProducts } from '../data/mockData';
+
 export const HomePage: React.FC = () => {
-  const [featured, setFeatured] = useState<Product[]>([]);
-  const [trending, setTrending] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [featured, setFeatured] = useState<Product[]>(fallbackProducts);
+  const [trending, setTrending] = useState<Product[]>(fallbackProducts);
+  const [categories, setCategories] = useState<Category[]>(fallbackCategories);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function loadHomeData() {
       try {
         setLoading(true);
         const [featuredRes, trendingRes, catRes] = await Promise.all([
-          productApi.getFeatured(),
-          productApi.getTrending(),
-          productApi.getCategories(),
+          productApi.getFeatured().catch(() => fallbackProducts),
+          productApi.getTrending().catch(() => fallbackProducts.slice().reverse()),
+          productApi.getCategories().catch(() => fallbackCategories),
         ]);
-        setFeatured(featuredRes);
-        setTrending(trendingRes);
-        setCategories(catRes);
+        setFeatured(Array.isArray(featuredRes) && featuredRes.length > 0 ? featuredRes : fallbackProducts);
+        setTrending(Array.isArray(trendingRes) && trendingRes.length > 0 ? trendingRes : fallbackProducts.slice().reverse());
+        setCategories(Array.isArray(catRes) && catRes.length > 0 ? catRes : fallbackCategories);
       } catch (err) {
         console.error('Failed to load home page content', err);
+        setFeatured(fallbackProducts);
+        setTrending(fallbackProducts);
+        setCategories(fallbackCategories);
       } finally {
         setLoading(false);
       }
@@ -139,7 +144,7 @@ export const HomePage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {categories.map((cat) => (
+          {(categories || []).map((cat) => (
             <Link
               key={cat.id}
               to={`/catalog?category=${cat.slug}`}
@@ -186,7 +191,7 @@ export const HomePage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {loading
             ? Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
-            : featured.map((product) => <ProductCard key={product.id} product={product} />)}
+            : (featured || []).map((product) => <ProductCard key={product.id} product={product} />)}
         </div>
       </section>
 
@@ -254,7 +259,7 @@ export const HomePage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {loading
             ? Array.from({ length: 4 }).map((_, i) => <ProductCardSkeleton key={i} />)
-            : trending.map((product) => <ProductCard key={product.id} product={product} />)}
+            : (trending || []).map((product) => <ProductCard key={product.id} product={product} />)}
         </div>
       </section>
     </div>

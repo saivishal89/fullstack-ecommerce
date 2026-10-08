@@ -15,14 +15,16 @@ import {
   Check,
 } from 'lucide-react';
 
+import { fallbackCategories, fallbackProducts } from '../data/mockData';
+
 export const CatalogPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>(fallbackProducts);
+  const [categories, setCategories] = useState<Category[]>(fallbackCategories);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [pagination, setPagination] = useState({ page: 1, limit: 12, total: 0, totalPages: 1 });
-  const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({ page: 1, limit: 12, total: fallbackProducts.length, totalPages: 1 });
+  const [loading, setLoading] = useState(false);
 
   // Filter state
   const selectedCategory = searchParams.get('category') || '';
@@ -46,11 +48,11 @@ export const CatalogPage: React.FC = () => {
     async function loadMeta() {
       try {
         const [cats, brs] = await Promise.all([
-          productApi.getCategories(),
-          productApi.getBrands(),
+          productApi.getCategories().catch(() => fallbackCategories),
+          productApi.getBrands().catch(() => []),
         ]);
-        setCategories(cats);
-        setBrands(brs);
+        setCategories(Array.isArray(cats) && cats.length > 0 ? cats : fallbackCategories);
+        setBrands(Array.isArray(brs) ? brs : []);
       } catch (err) {
         console.error(err);
       }
@@ -76,10 +78,15 @@ export const CatalogPage: React.FC = () => {
           inStock: inStock ? true : undefined,
         });
 
-        setProducts(res.data);
-        setPagination(res.pagination);
+        if (res && Array.isArray(res.data)) {
+          setProducts(res.data);
+          setPagination(res.pagination || { page: 1, limit: 12, total: res.data.length, totalPages: 1 });
+        } else {
+          setProducts(fallbackProducts);
+        }
       } catch (err) {
         console.error('Failed to load products', err);
+        setProducts(fallbackProducts);
       } finally {
         setLoading(false);
       }
